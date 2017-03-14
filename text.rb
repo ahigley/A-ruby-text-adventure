@@ -210,7 +210,7 @@ class Hero
 
 	BASEHP = 10
 	
-	 
+	alias location at 
 	def initialize
 		@location = $start_room
 		@level = 1
@@ -221,7 +221,6 @@ class Hero
 		@xp = 0
 		@buff = []
 	end
-
 	def life?
 		@hp > 0
 	end
@@ -379,16 +378,18 @@ class Items
 
 end
 
-class Rooms
-	attr_accessor :desc, :exits, :items, :name, :starting, :room_num
+class Rooms < World
+	attr_accessor :desc, :exits, :items, :name, :starting, :room_num, :xcoord, :ycoord
 
 	@@room_count = 0
 	def initialize
 		@starting = false
-		@room_num = @@room_count
+		@room_num = Fixnum.new
 		@@room_count += 1
 		@exits = Hash.new
 		@items = Array.new
+		@xcoord = Fixnum.new
+		@ycoord = Fixnum.new
 	end
 		
 
@@ -426,28 +427,116 @@ class Rooms
 		end
 	end
 
-	def exits_gen
-		number = rand(4)
-		possible = ["north", "south", "east", "west"]
-		if @exits.include?("north")
-			possible.delete("north")
-		elsif @exits.include?("south")
-			possible.delete("south")
-		elsif @exits.include?("east")
-			possible.delete("east")
-		elsif @exits.include?("west")
-			possible.delete("west")	
-		end
-		number.times do
-				element = rand((possible.length + 1))
-				@exits.push(possible[element])
-				possible.delete_at(element)
-			end
-	end
 
 
 
 end
+
+class World
+	attr_accessor :all_rooms, :xy, :exits_possible, :exits
+	def initialize
+		@exits = Array.new
+		world_gen
+		@@all_rooms = Hash.new
+		@xy = Array.new
+		@exits_possible = 0
+	end
+
+	def world_gen
+		$start_room = Rooms.new
+		$start_room.desc = "Welcome to the starting room."
+		$start_room.xcoord = 0
+		$start_room.ycoord = 0
+		$start_room.xy = [0,0]
+		@room1 = Rooms.new
+		@room2 = Rooms.new
+		@room3 = Roooms.new
+		$start_room.exits = { "north" => @room1,
+					"west" => @room2,
+		     			 "east" =>  @room3
+					}
+		@@all_rooms = { $start_room.xy => $start_room }
+
+	end
+	
+	def room_gen(room)
+		if $hero.location.exits.has_key?(nil)
+			fill_exits
+		end
+	end
+
+	# These methods check to see if there is a room immediately next to the room that needs exits to be generated. If there is already a room immediately next to the room being generated, the exit to that room is set.
+	# TO DO: replace $hero.at with room abstract so these methods can be called for newly generated rooms.
+	def check_east
+		if @@all_rooms.has_key?([($hero.at.xy(0) + 1), $hero.at.xy(1)])
+			$hero.at.exits["east"] = @@all_rooms[($hero.at.xy(0) + 1), $hero.at.xy(1)]
+		else
+			@exits_possible += 1
+			@exits << "east"
+		end
+	end
+		if @@all_rooms.has_key?([(room.xy(0) -1), room.xy(1)])
+			room.exits["west"] = @@all_rooms[($hero.at.xy(0) - 1), $hero.at.xy(1)]
+		else
+			@exits_possible += 1
+			@exits << "west"
+		end
+	end
+	def check_north(room)
+		if @@all_rooms.has_key?([room.xy(0), (room.xy(1) + 1)])
+			room.exits["north"] = @@all_rooms[room.xy(0), (room.xy(1) + 1)]
+		else
+			@exits_possible += 1
+			@exits << "north"
+			room.exits["north"] = nil
+		end
+	end
+	def check_south(room)
+		if @@all_rooms.has_key?([room.xy(0), (room.xy(1) - 1)])
+			room.exits["south"] = @@all_rooms[room.xy(0), (room.xy(1) - 1)]
+		else
+			@exits_possible += 1
+			@exits << "south"
+			room.exits["south"] = nil
+		end
+	end		
+	def check_directions
+		check_east
+		check_west
+		check_north
+		check_south
+	end
+
+	def exits_gen
+		do rand(@exits_possible.times)
+		@exits.sample = direction
+		$hero.at.exits[direction] = nil
+
+		if direction == "north"
+			$hero.at.exits[direction] = new($hero.at.xy(0), ($hero.at.xy(1) + 1))
+		elsif direction == "south"
+			$hero.at.exits[direction] = new($hero.at.xy(0), ($hero.at.xy(1) - 1))
+		elsif direction == "east"
+			$hero.at.exits[direction] = new(($hero.at.xy(0) + 1), $hero.at.xy(1))
+		elsif direction == "west"
+			$hero.at.exits[direction] = new(($hero.at.xy(0) - 1), $hero.at.xy(1))
+		end
+		@exits - ($hero.at.exits)
+		end
+	end
+
+	def new(a,b)
+		room = Rooms.new
+		room.desc_gen
+		room.item_gen
+		room.xcoord = a
+		room.ycoord = b
+	end
+		
+		
+		
+		
+		
 
 @room1 = Rooms.new
 @room1.item_gen
