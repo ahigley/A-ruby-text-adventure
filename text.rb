@@ -1,4 +1,208 @@
-class Game
+
+class Enemy
+	attr_accessor :hp, :dmg, :xpreward, :loot
+
+	BASEMOBHP = 1
+
+	def initialize
+		@hp = BASEMOBHP
+		@dmg = 1
+		@xpreward = 10
+		@loot = []
+	end
+
+	def defeated?
+		@hp <= 0
+		puts "You have defeated the enemy"
+		$hero.xp(@xpreward)
+		$hero.pick_up(@loot)
+	end
+	
+	def alive?
+		@hp >0
+	end
+
+	def attack
+		$hero.wound(@dmg)
+	end
+
+	def wound(amount)
+		@hp -= amount
+	end
+end
+
+class Items
+	# Due to problems w/ :pot I've removed :text and :scroll. Remember to add these back in after :pot starts working.
+	MASTERLIST = [
+		:pot, :text, :scroll
+		]
+
+	
+	attr_accessor :type
+
+	# Without having @hero = Hero.new in the Items initialize use (:pot) returns an error that 'heal' is not a valid method.
+	# Identifying the object with the properties of the Hero class is necessary to call @hero.heal it would seem
+	# Game class also initializes @hero = Hero.nex -- does initializing like this again in Items mean that we are 
+	# overwriting @hero to the initial state of Hero?
+	def initialize
+		@type = MASTERLIST.sample
+	end
+
+	# @hero.heal is not increasing @hp,even though @hero.heal DOES increase @hp when the :ah command is entered and read within
+	# the Game class. A secondary issue is that the potion i sn't destroyed up on use.
+	# A second hash other than TYPE is likely needed as TYPE is the master list of all potential items;
+	# removing :pot from TYPE would mean that any future rooms (to be added) are unable to generate :pot
+	def use
+		case @type
+		when :pot
+			puts"You chug the contents of the bottle."
+			$hero.heal(3)
+		when :text
+			puts"Looking closely, you can see a simple drawing of a face on the paper:
+
+			=)
+
+			"
+		when :scroll
+			puts"You read the scroll to produce a magical effect, but nothing happens!"
+		end
+	end
+
+	def potion
+		end
+
+
+
+end
+
+
+class World
+	attr_accessor :all_rooms, :xy, :exits_possible, :exits
+	def initialize
+		$start_room = Rooms.new
+		$start_room.desc = "Welcome to the starting room."
+		$start_room.xy = [0, 0]
+		$start_room.exits = { "north" => nil,
+					"west" => nil,
+		     			 "east" => nil 
+					}
+		@@all_rooms ={ $start_room.xy => $start_room, [0, 1] => nil, [-1, 0] => nil, [1, 0] => nil }
+		@exits = Array.new
+		@xy = Array.new
+		@exits_possible = 0
+	end
+
+	def check_room(direction, x, y)
+		room = [x, y]
+		if @@all_rooms.has_key?([x, y]) && (@@all_rooms[room] != nil)
+			check_exits(x, y)
+		else
+			generate(direction, x, y)
+		end
+	end
+
+	# These methods check to see if there is a room immediately next to the room that needs exits to be generated. If there is already a room immediately next to the room being generated, the exit to that room is set.
+	# TO DO: replace $hero.at with room abstract so these methods can be called for newly generated rooms.
+	def check_exits(x, y)
+		north = [x, (y+1)]
+		south = [x, (y-1)]
+		east = [(x+1), y]
+		west = [(x-1), y]
+		if @@all_rooms.has_key?(east) && (@@all_rooms[east] != nil)
+			room.exits.merge!({"east" => @@all_rooms[east]})
+		elsif @@all_rooms.has_key?([west]) && (@@all_rooms[west] != nil)
+			room.exits.merge!({"west" => @@all_rooms[west]})
+		elsif @@all_rooms.has_key?([north]) && (@@all_rooms[north] != nil)
+			room.exits.merge!({"north" => @@all_rooms[north]})
+		elsif @@all_rooms.has_key?([south]) && (@@all_rooms[south] != nil)
+			room.exits.merge!({"south" => @@all_rooms[south]})
+		end
+	end
+
+		
+	def generate(direction, x, y)
+		@room = Rooms.new
+		@room.desc_gen
+		@room.item_gen
+		@room.xy = [x, y]
+		new_room = { @room.xy => @room}
+		@@all_rooms.merge(new_room)
+		if direction == "north"
+			@room.exits = {"south" => $hero.location}
+		elsif direction == "south"
+			@room.exits = {"north" => $hero.location}
+		elsif direction == "east"
+			@room.exits= {"west" => $hero.location}
+		elsif direction == "west"
+			@room.exits= {"east" => $hero.location}
+		end
+
+		possible = ["north", "south", "east", "west"]
+
+		(rand(3)).times do |gen|
+			actual = (possible - @room.exits.keys)
+			gen = actual.sample
+			@room.exits.merge({gen => nil})
+		end
+		check_exits(x, y)
+	end
+end		
+		
+		
+		
+		
+class Rooms < World
+	attr_accessor :desc, :exits, :items, :name, :starting, :xy
+
+	@@room_count = 0
+	def initialize
+		@starting = false
+		@@room_count += 1
+		@exits = Hash.new
+		@items = Array.new
+		@xy = Array.new
+	end
+		
+
+	
+		
+	def desc_gen
+		choice = rand(3)
+		case choice
+		when 1
+			@desc = "You see... the first type of room!"
+		when 2
+			@desc = "You see... the second type of room!"
+		when 3
+			@desc = "You see... the third type of room!"
+		end
+	end
+
+	def item_gen
+		number = (1 + rand(3))
+		case number
+		when 1
+			@loot1 = Items.new
+			@items = [@loot1.type.to_s]	
+		when 2
+			@loot1 = Items.new
+			@loot2 = Items.new
+			@items = [@loot1.type.to_s, @loot2.type.to_s]
+		when 3
+			@loot1 = Items.new
+			@loot2 = Items.new
+			@loot3 = Items.new
+			@items = [@loot1.type.to_s, @loot2.type.to_s, @loot3.type.to_s]
+		else
+			@items = ["There are no items here."]
+		end
+	end
+
+
+
+
+end
+class Game < World
 	# :ow, :up, and :ah are strictly development commands to ensure values are changing properly, death message
 	# triggers when @hero.dead? etc.
 	ACTIONS = [
@@ -38,12 +242,16 @@ class Game
 			@west_cmds = ["w", "left", "west"]
 			@south_cmds = ["s", "down", "south"]
 				if @north_cmds.include?(direction)
+					check_room("north", $hero.location.xy[0], ($hero.location.xy[1] + 1))
 					move("north")
 				elsif @east_cmds.include?(direction)
+					check_room("east", ($hero.location.xy[0] + 1), $hero.location.xy[1])
 					move("east")
 				elsif @west_cmds.include?(direction)
+					check_room("west", ($hero.location.xy[0] - 1), $hero.location.xy[1])
 					move("west")
 				elsif @south_cmds.include?(direction)
+					check_room("south", $hero.location.xy[0], ($hero.location.xy[1] - 1))
 					move("south")
 				end
 		end
@@ -159,7 +367,6 @@ class Game
 
 	def game_start
 		while $hero.life? 
-
 			puts "What is your next move, brave hero?"
 			@input = gets.chomp.to_s	
 			choice(@input)
@@ -172,45 +379,12 @@ class Game
 	end
 end
 
-class Enemy
-	attr_accessor :hp, :dmg, :xpreward, :loot
-
-	BASEMOBHP = 1
-
-	def initialize
-		@hp = BASEMOBHP
-		@dmg = 1
-		@xpreward = 10
-		@loot = []
-	end
-
-	def defeated?
-		@hp <= 0
-		puts "You have defeated the enemy"
-		$hero.xp(@xpreward)
-		$hero.pick_up(@loot)
-	end
-	
-	def alive?
-		@hp >0
-	end
-
-	def attack
-		$hero.wound(@dmg)
-	end
-
-	def wound(amount)
-		@hp -= amount
-	end
-end
-
-class Hero
+class Hero < World
 	attr_accessor :level, :hp, :score, :xp, :buff
 	attr_accessor :inv, :location
 
 	BASEHP = 10
 	
-	alias location at 
 	def initialize
 		@location = $start_room
 		@level = 1
@@ -334,229 +508,8 @@ class Hero
 	end
 end
 
-class Items
-	# Due to problems w/ :pot I've removed :text and :scroll. Remember to add these back in after :pot starts working.
-	MASTERLIST = [
-		:pot, :text, :scroll
-		]
 
-	
-	attr_accessor :type
-
-	# Without having @hero = Hero.new in the Items initialize use (:pot) returns an error that 'heal' is not a valid method.
-	# Identifying the object with the properties of the Hero class is necessary to call @hero.heal it would seem
-	# Game class also initializes @hero = Hero.nex -- does initializing like this again in Items mean that we are 
-	# overwriting @hero to the initial state of Hero?
-	def initialize
-		@type = MASTERLIST.sample
-	end
-
-	# @hero.heal is not increasing @hp,even though @hero.heal DOES increase @hp when the :ah command is entered and read within
-	# the Game class. A secondary issue is that the potion i sn't destroyed up on use.
-	# A second hash other than TYPE is likely needed as TYPE is the master list of all potential items;
-	# removing :pot from TYPE would mean that any future rooms (to be added) are unable to generate :pot
-	def use
-		case @type
-		when :pot
-			puts"You chug the contents of the bottle."
-			$hero.heal(3)
-		when :text
-			puts"Looking closely, you can see a simple drawing of a face on the paper:
-
-			=)
-
-			"
-		when :scroll
-			puts"You read the scroll to produce a magical effect, but nothing happens!"
-		end
-	end
-
-	def potion
-		end
-
-
-
-end
-
-class Rooms < World
-	attr_accessor :desc, :exits, :items, :name, :starting, :room_num, :xcoord, :ycoord
-
-	@@room_count = 0
-	def initialize
-		@starting = false
-		@room_num = Fixnum.new
-		@@room_count += 1
-		@exits = Hash.new
-		@items = Array.new
-		@xcoord = Fixnum.new
-		@ycoord = Fixnum.new
-	end
-		
-
-	
-		
-	def desc_gen
-		choice = rand(3)
-		case choice
-		when 1
-			@desc = "You see... the first type of room!"
-		when 2
-			@desc = "You see... the second type of room!"
-		when 3
-			@desc = "You see... the third type of room!"
-		end
-	end
-
-	def item_gen
-		number = (1 + rand(3))
-		case number
-		when 1
-			@loot1 = Items.new
-			@items = [@loot1.type.to_s]	
-		when 2
-			@loot1 = Items.new
-			@loot2 = Items.new
-			@items = [@loot1.type.to_s, @loot2.type.to_s]
-		when 3
-			@loot1 = Items.new
-			@loot2 = Items.new
-			@loot3 = Items.new
-			@items = [@loot1.type.to_s, @loot2.type.to_s, @loot3.type.to_s]
-		else
-			@items = ["There are no items here."]
-		end
-	end
-
-
-
-
-end
-
-class World
-	attr_accessor :all_rooms, :xy, :exits_possible, :exits
-	def initialize
-		@exits = Array.new
-		world_gen
-		@@all_rooms = Hash.new
-		@xy = Array.new
-		@exits_possible = 0
-	end
-
-	def world_gen
-		$start_room = Rooms.new
-		$start_room.desc = "Welcome to the starting room."
-		$start_room.xcoord = 0
-		$start_room.ycoord = 0
-		$start_room.xy = [0,0]
-		@room1 = Rooms.new
-		@room2 = Rooms.new
-		@room3 = Roooms.new
-		$start_room.exits = { "north" => @room1,
-					"west" => @room2,
-		     			 "east" =>  @room3
-					}
-		@@all_rooms = { $start_room.xy => $start_room }
-
-	end
-	
-	def room_gen(room)
-		if $hero.location.exits.has_key?(nil)
-			fill_exits
-		end
-	end
-
-	# These methods check to see if there is a room immediately next to the room that needs exits to be generated. If there is already a room immediately next to the room being generated, the exit to that room is set.
-	# TO DO: replace $hero.at with room abstract so these methods can be called for newly generated rooms.
-	def check_east
-		if @@all_rooms.has_key?([($hero.at.xy(0) + 1), $hero.at.xy(1)])
-			$hero.at.exits["east"] = @@all_rooms[($hero.at.xy(0) + 1), $hero.at.xy(1)]
-		else
-			@exits_possible += 1
-			@exits << "east"
-		end
-	end
-		if @@all_rooms.has_key?([(room.xy(0) -1), room.xy(1)])
-			room.exits["west"] = @@all_rooms[($hero.at.xy(0) - 1), $hero.at.xy(1)]
-		else
-			@exits_possible += 1
-			@exits << "west"
-		end
-	end
-	def check_north(room)
-		if @@all_rooms.has_key?([room.xy(0), (room.xy(1) + 1)])
-			room.exits["north"] = @@all_rooms[room.xy(0), (room.xy(1) + 1)]
-		else
-			@exits_possible += 1
-			@exits << "north"
-			room.exits["north"] = nil
-		end
-	end
-	def check_south(room)
-		if @@all_rooms.has_key?([room.xy(0), (room.xy(1) - 1)])
-			room.exits["south"] = @@all_rooms[room.xy(0), (room.xy(1) - 1)]
-		else
-			@exits_possible += 1
-			@exits << "south"
-			room.exits["south"] = nil
-		end
-	end		
-	def check_directions
-		check_east
-		check_west
-		check_north
-		check_south
-	end
-
-	def exits_gen
-		do rand(@exits_possible.times)
-		@exits.sample = direction
-		$hero.at.exits[direction] = nil
-
-		if direction == "north"
-			$hero.at.exits[direction] = new($hero.at.xy(0), ($hero.at.xy(1) + 1))
-		elsif direction == "south"
-			$hero.at.exits[direction] = new($hero.at.xy(0), ($hero.at.xy(1) - 1))
-		elsif direction == "east"
-			$hero.at.exits[direction] = new(($hero.at.xy(0) + 1), $hero.at.xy(1))
-		elsif direction == "west"
-			$hero.at.exits[direction] = new(($hero.at.xy(0) - 1), $hero.at.xy(1))
-		end
-		@exits - ($hero.at.exits)
-		end
-	end
-
-	def new(a,b)
-		room = Rooms.new
-		room.desc_gen
-		room.item_gen
-		room.xcoord = a
-		room.ycoord = b
-	end
-		
-		
-		
-		
-		
-
-@room1 = Rooms.new
-@room1.item_gen
-@room1.desc = "Welcome to room one."
-@room2 = Rooms.new
-@room2.item_gen
-@room2.desc = "Welcome to room two."
-@room3 = Rooms.new
-@room3.item_gen
-@room3.desc = "Welcome to room three."
-$start_room = Rooms.new
-$start_room.desc = "Welcome to the starting room."
-$start_room.exits = { "north" => @room1,
-		      "west" => @room2,
-		      "east" =>  @room3
-}
-@room3.exits = {"west" => $start_room}
-@room2.exits = {"east" => $start_room}
-@room1.exits = {"south" => $start_room}
-
+World.new
 $hero = Hero.new
 Game.new
 
