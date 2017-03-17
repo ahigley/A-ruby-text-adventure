@@ -32,7 +32,6 @@ class Enemy
 end
 
 class Items
-	# Due to problems w/ :pot I've removed :text and :scroll. Remember to add these back in after :pot starts working.
 	MASTERLIST = [
 		:pot, :text, :scroll
 		]
@@ -40,18 +39,10 @@ class Items
 	
 	attr_accessor :type
 
-	# Without having @hero = Hero.new in the Items initialize use (:pot) returns an error that 'heal' is not a valid method.
-	# Identifying the object with the properties of the Hero class is necessary to call @hero.heal it would seem
-	# Game class also initializes @hero = Hero.nex -- does initializing like this again in Items mean that we are 
-	# overwriting @hero to the initial state of Hero?
 	def initialize
 		@type = MASTERLIST.sample
 	end
 
-	# @hero.heal is not increasing @hp,even though @hero.heal DOES increase @hp when the :ah command is entered and read within
-	# the Game class. A secondary issue is that the potion i sn't destroyed up on use.
-	# A second hash other than TYPE is likely needed as TYPE is the master list of all potential items;
-	# removing :pot from TYPE would mean that any future rooms (to be added) are unable to generate :pot
 	def use
 		case @type
 		when :pot
@@ -77,24 +68,17 @@ end
 
 
 class World
-	attr_accessor :all_rooms, :xy, :exits_possible, :exits
+	attr_accessor :all_rooms, :exits_possible
 	def initialize
-		$start_room = Rooms.new
-		$start_room.desc = "Welcome to the starting room."
-		$start_room.xy = [0, 0]
-		$start_room.exits = { "north" => nil,
-					"west" => nil,
-		     			 "east" => nil 
-					}
-		@@all_rooms ={ $start_room.xy => $start_room, [0, 1] => nil, [-1, 0] => nil, [1, 0] => nil }
-		@exits = Array.new
-		@xy = Array.new
+		
+		@@all_rooms ={"0, 0" => $start_room, "0, 1" => nil, "-1, 0" => nil, "1, 0" => nil }
 		@exits_possible = 0
 	end
 
+
 	def check_room(direction, x, y)
-		room = [x, y]
-		if @@all_rooms.has_key?([x, y]) && (@@all_rooms[room] != nil)
+			xy_pos = "#{x}, #{y}"	
+		if @@all_rooms.has_key?(xy_pos) && (@@all_rooms[xy_pos] != nil)
 			check_exits(x, y)
 		else
 			generate(direction, x, y)
@@ -104,10 +88,15 @@ class World
 	# These methods check to see if there is a room immediately next to the room that needs exits to be generated. If there is already a room immediately next to the room being generated, the exit to that room is set.
 	# TO DO: replace $hero.at with room abstract so these methods can be called for newly generated rooms.
 	def check_exits(x, y)
-		north = [x, (y+1)]
-		south = [x, (y-1)]
-		east = [(x+1), y]
-		west = [(x-1), y]
+		n = y+1
+		s = y-1
+		e = x+1
+		w = x-1
+		north = "#{x}, #{n}"
+		south = "#{x}, #{s}"
+		east = "#{e}, #{y}"
+		west = "#{w}, #{y}"
+		room = @@all_rooms["#{x}, #{y}"]
 		if @@all_rooms.has_key?(east) && (@@all_rooms[east] != nil)
 			room.exits.merge!({"east" => @@all_rooms[east]})
 		elsif @@all_rooms.has_key?([west]) && (@@all_rooms[west] != nil)
@@ -124,27 +113,38 @@ class World
 		@room = Rooms.new
 		@room.desc_gen
 		@room.item_gen
-		@room.xy = [x, y]
+		@room.xy = "#{x}, #{y}"
 		new_room = { @room.xy => @room}
-		@@all_rooms.merge(new_room)
+		@@all_rooms.merge!(new_room)
+		check_exits(x,y)
 		if direction == "north"
-			@room.exits = {"south" => $hero.location}
+			new_north = {"south" => $hero.location}
+			@room.exits.merge!(new_north)
+			north = {"north" => @room}
+			$hero.location.exits.merge!(north)
 		elsif direction == "south"
-			@room.exits = {"north" => $hero.location}
+			new_south = {"north" => $hero.location}
+			@room.exits.merge!(new_south)
+			south = {"south" => @room}
+			$hero.location.exits.merge!(south)
 		elsif direction == "east"
-			@room.exits= {"west" => $hero.location}
+			new_east = {"west" => $hero.location}
+			@room.exits.merge!(new_east)
+			east = {"east" => @room}
+			$hero.location.exits.merge!(east)
 		elsif direction == "west"
-			@room.exits= {"east" => $hero.location}
-		end
-
-		possible = ["north", "south", "east", "west"]
-
-		(rand(3)).times do |gen|
-			actual = (possible - @room.exits.keys)
-			gen = actual.sample
-			@room.exits.merge({gen => nil})
+			new_west = {"east" => $hero.location}
+			@room.exits.merge!(new_west)
+			west = {"west" => @room}
+			$hero.location.exits.merge!(west)
 		end
 		check_exits(x, y)
+		possible = (["north", "south", "east", "west"] - @room.exits.keys)
+		(rand(possible.count)).times do |gen|
+			actual = (possible - @room.exits.keys)
+			gen = actual.sample
+			@room.exits.merge!({gen => nil})
+		end
 	end
 end		
 		
@@ -152,22 +152,21 @@ end
 		
 		
 class Rooms < World
-	attr_accessor :desc, :exits, :items, :name, :starting, :xy
+	attr_accessor :desc, :exits, :items, :xy
 
 	@@room_count = 0
 	def initialize
-		@starting = false
 		@@room_count += 1
 		@exits = Hash.new
 		@items = Array.new
-		@xy = Array.new
+		@xy = String.new
 	end
 		
 
 	
 		
 	def desc_gen
-		choice = rand(3)
+		choice = rand(1..3)
 		case choice
 		when 1
 			@desc = "You see... the first type of room!"
@@ -213,8 +212,6 @@ class Game < World
 	end
 
 
-	# Right now Game initialize triggers Items.new -- this will change when rooms are added. Entering a new room should trigger item 
-	# generation. 
 	def choice(input)
 		words = input.to_s.split(" ")
 
@@ -241,17 +238,20 @@ class Game < World
 			@east_cmds = ["e", "right", "east"]
 			@west_cmds = ["w", "left", "west"]
 			@south_cmds = ["s", "down", "south"]
+					xy = $hero.location.xy.split(", ")
+					x = xy[0].to_i
+					y = xy[1].to_i
 				if @north_cmds.include?(direction)
-					check_room("north", $hero.location.xy[0], ($hero.location.xy[1] + 1))
+					check_room("north", x, (y + 1))
 					move("north")
 				elsif @east_cmds.include?(direction)
-					check_room("east", ($hero.location.xy[0] + 1), $hero.location.xy[1])
+					check_room("east", (x + 1), y)
 					move("east")
 				elsif @west_cmds.include?(direction)
-					check_room("west", ($hero.location.xy[0] - 1), $hero.location.xy[1])
+					check_room("west", (x - 1), y)
 					move("west")
 				elsif @south_cmds.include?(direction)
-					check_room("south", $hero.location.xy[0], ($hero.location.xy[1] - 1))
+					check_room("south", x, (y - 1))
 					move("south")
 				end
 		end
@@ -259,6 +259,7 @@ class Game < World
 			if $hero.location.exits.has_key?(direction)
 				newroom = $hero.location.exits[direction]
 				$hero.location = newroom
+				$hero.location.xy = newroom.xy
 			else
 				puts "You cannot travel #{direction}. The path does not lead there."
 			end
@@ -356,6 +357,7 @@ class Game < World
 			if $hero.location.exits.has_key?(direction)
 				newroom = $hero.location.exits[direction]
 				$hero.location = newroom
+				$hero.xy = newroom.xy
 			else
 				puts "You cannot travel #{direction}. The path does not lead there."
 			end
@@ -381,7 +383,7 @@ end
 
 class Hero < World
 	attr_accessor :level, :hp, :score, :xp, :buff
-	attr_accessor :inv, :location
+	attr_accessor :inv, :location, :xy
 
 	BASEHP = 10
 	
@@ -409,7 +411,8 @@ class Hero < World
 	end
 
 	def drop(thing)
-		@inv.pop thing
+		self.location.items << thing
+		@inv.delete_at(index(thing) || puts "You have no #{thing} to drop!")
 	end
 	def use(thing)
 			if @inv.include?(thing)
@@ -445,6 +448,7 @@ class Hero < World
 	end
 	# Xp/level is checked each input cycle - at this time I can't figure out how to increase current xp a single time only 
 	# At level 2 max hp increases by 5. This should also result in @hp += 5, but only once.
+	# If written into the level? method, @hp increases every input cycle which is not desired.
 	# If written into the level? method, @hp increases every input cycle which is not desired.
 	def level?
 		
@@ -508,7 +512,13 @@ class Hero < World
 	end
 end
 
-
+$start_room = Rooms.new
+$start_room.desc = "Welcome to the starting room."
+$start_room.xy = "0, 0"
+$start_room.exits = { "north" => nil,
+			"west" => nil,
+     			 "east" => nil 
+		} 
 World.new
 $hero = Hero.new
 Game.new
