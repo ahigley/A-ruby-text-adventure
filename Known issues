@@ -1,0 +1,7 @@
+Currently the program is bugged because eql? needs to be overwritten for ruby hash structures to be user created keys.
+Since the program just needs to deal with text this can be altered. If keys are kept as strings it shouldn't be a problem.
+
+TODO: convert array values of x, y positions to strings of the format "x, y" when placing their values into hashes; regular 
+expressions should be helpful here.
+
+The alternative would be to over write ruby's hash eql? which might be easier short term but seems prone to cause issues long term.
