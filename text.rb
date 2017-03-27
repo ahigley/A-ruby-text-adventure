@@ -69,6 +69,7 @@ class Game
 		@south_cmds = ["s", "down", "south"]
 		@all_cmds << (@north_cmds + @east_cmds + @west_cmds + @south_cmds)
 		word_disambig(@word1, @word2, @word3)
+	end
 		def move_check(word)
 			allowed = @north_cmds + @east_cmds + @west_cmds + @south_cmds
 
@@ -227,7 +228,6 @@ class Game
 	end
 	def resolve
 		$hero.level?
-	end
 	end
 	#Word disambiguation begins by evaluating word1. In some cases that's all that's needed. If word2 is considered relevant word2 is evaluated as well. Right now, for commands like "look" word2 could be anything so 
 	#look around is functionally the same as look. The various cmd arrays contain all valid synonymns for a given command. This way new synonymns can be added with  minimal effort. Currently word2 evaluations happen within
