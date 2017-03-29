@@ -1,19 +1,29 @@
-
-
 class Items
 	MASTERLIST = [
-		:pot, :text, :scroll
+		:potion, :scroll
 		]
 
 	
-	attr_accessor :type
+	attr_accessor :master_type, :desc, :type, :effect, :buff, :debuff
 
 	def initialize
-		@type = MASTERLIST.sample
+		@master_type = MASTERLIST.sample
+		case @master_type
+		when :potion
+			potion = Potions.new
+			@type = potion.type
+			@desc = potion.desc
+			@effect = potion.effect
+			@buff = potion.buff
+			@debuff = potion.debuff
+		
+		when :scroll
+			@subtype = Scrolls.new
+		end
 	end
 
 	def use
-		case @type
+		case @master_type
 		when :pot
 			puts"You chug the contents of the bottle."
 			$hero.heal(3)
@@ -28,20 +38,79 @@ class Items
 		end
 	end
 
-	def potion
-		end
 
 
 
 end
 
+class Scrolls < Items
+	ALL_SCROLLS = ["Blank sheet", "Smiley Sheet"]
+	def initialize
+	end
+end
+class Potions < Items
+	ALL_POTIONS = ["Healing Potion", "Potion of Strength", "Poison"]
+	@@colors = ["green", "red", "pink", "blue", "yellow", "orange", "purple"]
+	attr_accessor :desc, :type, :buff, :debuff, :colors 
+	def initialize
+		@colors = Array.new
+		@colors << @@colors.sample
+		@colors = (@@colors - @colors)
+		@desc = "A bottle containing a shimmering #{@color.to_s} liquid"
+		@type = ALL_POTIONS.sample
+		case @type
+		when@type == "Healing Potion"
+			pot = Health_pot.new
+			@type = pot
+			@buff = pot.buff
+			@debuff = pot.debuff
+			effect(target) == pot.effect(target)
+		when @type == "Potion of Strength"
+			Str_pot.new
+		when @type == "Poison"
+			pot = Poison_pot.new
+			@type = pot
+			@buff = pot.buff
+			@debuff = pot.debuff
+			effect(target) == pot.effect(target)	
+		end
+	end
+end
+class Poison_pot < Potions
+	def initialize
+		@buff = false
+		@debuff = true
+	end
+	def effect(target)
+		target.hp -= 3
+	end
+end
 
-	
+class Health_pot < Potions	
+	def initialize
+		@buff = true
+		@debuff = false
 		
+	end
+	def effect(target)
+		target.hp += 3
+	end
+end
+		
+class Str_pot < Potions
+	def initialize
+		@buff = true
+		@debuff = false
+	end	
+	def effect(target)
+		target.str += 1
+	end
+end
 		
 		
 class Game 
 	# :ow, :up, and :ah are strictly development commands to ensure values are changing properly, death message
+	#
 	# triggers when @hero.dead? etc.
 	ACTIONS = [
 		:ow, :status, :up, :q, :look, :use, :ah, :get, :inventory
@@ -229,6 +298,7 @@ class Game
 	def resolve
 		$hero.level?
 	end
+
 	#Word disambiguation begins by evaluating word1. In some cases that's all that's needed. If word2 is considered relevant word2 is evaluated as well. Right now, for commands like "look" word2 could be anything so 
 	#look around is functionally the same as look. The various cmd arrays contain all valid synonymns for a given command. This way new synonymns can be added with  minimal effort. Currently word2 evaluations happen within
 	#the elsif structure of evaluating word1 -- it may be worth reworking this in future. Word1_disambig -> word2_disambig. However, this hasn't been done now as generally evaluations of word2 branch off based on word1. That is 
@@ -261,7 +331,11 @@ class Game
 					"
 					puts "The following items are on the floor:"
 					items = $hero.location.items
-					puts items.join(" ")
+					loot = Array.new
+					items.each do |item|
+						loot << item.desc
+					end	
+					puts loot.join(" ")
 			elsif get_cmds.include?(word1)
 				if @word2 != nil
 					if $hero.location.items.include?(@word2)
@@ -289,7 +363,12 @@ class Game
 				exit
 			elsif use_cmds.include?(word1)
 				if $hero.inv.include?(@word2)
-					$hero.use(@word2)	
+					if @word3 != nil
+						$hero.inv(@word2).effect(@word3)	
+						$hero.inv.delete(@word2)	
+					else 
+						puts "What do you want to use the #{@word2} on?"
+					end
 				else
 					puts"You must get an item before you can use it."
 				end
@@ -299,6 +378,7 @@ class Game
 				
 
 		end
+
 
 
 
@@ -355,22 +435,24 @@ class Rooms < World
 	#Currently item_gen is in no way connected to desc_gen -- this needs to be changed. desc_gen only has place holder generation descrsiptions at the moment. In future meaninful descriptions should pair with some sort of loot
 	#table. If the description generated is a treasure room, the chance of loot should be higher. Additionally an alchemists chamber should have a higher chance of generating potions. Presently this isn't represented in item_gen
 	def item_gen
-		number = (1 + rand(3))
+		number = rand(3)
 		case number
 		when 1
 			@loot1 = Items.new
-			@items = [@loot1.type.to_s]	
+			@items = [@loot1]	
 		when 2
 			@loot1 = Items.new
 			@loot2 = Items.new
-			@items = [@loot1.type.to_s, @loot2.type.to_s]
+			@items = [@loot1, @loot2]
 		when 3
 			@loot1 = Items.new
 			@loot2 = Items.new
 			@loot3 = Items.new
-			@items = [@loot1.type.to_s, @loot2.type.to_s, @loot3.type.to_s]
+			@items = [@loot1, @loot2, @loot3]
 		else
-			@items = ["There are no items here."]
+			@loot1 = Items.new
+			@loot1.desc = "There are no items here."
+			@items = [@loot1]
 		end
 	end
 
@@ -380,13 +462,14 @@ class Rooms < World
 end
 
 class Hero < World
-	attr_accessor :level, :hp, :score, :xp, :buff
+	attr_accessor :level, :hp, :score, :xp, :buff, :str
 	attr_accessor :inv, :location, :xy
 
 	BASEHP = 10
 	
 	def initialize
 		@location = $start_room
+		@str = 1
 		@level = 1
 		@max = BASEHP
 		@hp = BASEHP
@@ -426,7 +509,6 @@ class Hero < World
 						puts"You read the scroll to produce a magical effect, but nothing happens!"
 						delete(thing)
 					end
-			else
 				puts "You don't have a #{thing} to use."
 			end
 	end
