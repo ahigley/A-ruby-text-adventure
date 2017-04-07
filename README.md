@@ -6,4 +6,8 @@ In the latest update bootstrapping was added. Hopefully it will make the game a 
 
 If you want to play the current version of the game without bootstrapping just download and run text.rb
 
-If you want to play the current version of the game with bootstrapping download everything but text.rb and instead run text_exp.rb
+If you want to play the current version of the game with bootstrapping download everything but text.rb and instead run text_exp.rb.
+
+Bootstrapping is currently experimental and therefore broken. 
+
+RECOMMENDED: Download text.rb; run ruby text.rb
