@@ -1,12 +1,10 @@
 puts "If you are here because I applied for an internship, please hire me. If not, enjoy."
 puts "This game is under development. If you're confused about something e-mail me at addison.higley@gmail.com"
-# An attempt at bootstrapping
-lib_dir = File.expand_path(File.dirname(__FILE__))
-require File.join(lib_dir, 'text_game_engine.rb')
-require File.join(lib_dir, 'text_world.rb')
-require File.join(lib_dir, 'text_hero.rb')
-require File.join(lib_dir, 'text_room_gen.rb')
-require File.join(lib_dir, 'text_items.rb')	
+# An attempt at making the files a bit more manageable
+require_relative 'game_engine.rb'
+require_relative 'text_world.rb'
+require_relative 'text_hero.rb'
+require_relative 'text_items.rb'	
 		
 
 
