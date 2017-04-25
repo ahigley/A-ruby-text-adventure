@@ -1,4 +1,3 @@
-puts "If you are here because I applied for an internship, please hire me. If not, enjoy."
 puts "This game is under development. If you're confused about something e-mail me at addison.higley@gmail.com"
 # An attempt at making the files a bit more manageable
 require_relative 'game_engine.rb'

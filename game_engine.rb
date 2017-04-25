@@ -40,46 +40,7 @@ class Game
 					
 	#Since the Game class is essentially the game engine, most user actions are still here but there is a lot of room for rebuilding. Below you can see we're calling a method within $hero.
 	#It's probably going to have a separate class full of user actions alone at some point but for now, it is what it is.
-		def get(thing)def move_disambig(direction)
-			@north_cmds = ["n", "up", "north"]
-			@east_cmds = ["e", "right", "east"]
-			@west_cmds = ["w", "left", "west"]
-			@south_cmds = ["s", "down", "south"]
-
-					xy = $hero.location.xy.split(", ")
-					x = xy[0].to_i
-					y = xy[1].to_i
-				if @north_cmds.include?(direction)
-					if $hero.location.exits.include?("north")
-						check_room("north", x, (y + 1))
-						move("north")
-					else
-						puts "There is no exit to the north!"
-					end
-				elsif @east_cmds.include?(direction)
-					if $hero.location.exits.include?("east")
-						check_room("east", (x + 1), y)
-						move("east")
-					else
-						puts "There is no exit to the east!"
-					end
-				elsif @west_cmds.include?(direction)
-					if $hero.location.exits.include?("west")
-						check_room("west", (x - 1), y)
-						move("west")
-					else
-						puts "There is no exit to the west!"
-					end
-				elsif @south_cmds.include?(direction)
-					if $hero.location.exits.include?("south")
-						check_room("south", x, (y - 1))
-						move("south")
-					else 
-						puts "There is no exit to the south!"
-					end
-				end
-		end
-		def move(direction)
+			def move(direction)
 				newroom = $hero.location.exits[direction]
 				puts "move"
 				p newroom
@@ -156,11 +117,9 @@ class Game
 		end
 	end
 
-			$hero.pick_up(thing)
-		end
 
-		#This is really the start of the algorithm responsible for generating new rooms. If rooms weren't drawn as you attempt to enter them, the algorithm could be kept separate from the move method. I like this way better
-		#because it means that later, if we count the number of unexplored exits, we could then change the algorithm to force additional open doors -- that way you're guarenteed to always have new exits available. 
+#This is really the start of the algorithm responsible for generating new rooms. If rooms weren't drawn as you attempt to enter them, the algorithm could be kept separate from the move method. I like this way better
+#because it means that later, if we count the number of unexplored exits, we could then change the algorithm to force additional open doors -- that way you're guarenteed to always have new exits available. 
 		def move_disambig(direction)
 			@north_cmds = ["n", "up", "north"]
 			@east_cmds = ["e", "right", "east"]
@@ -390,5 +349,4 @@ class Game
 		puts "You have died."
 	end
 	end
-	
-end
+	end	
