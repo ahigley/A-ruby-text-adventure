@@ -59,6 +59,4 @@ class Rooms < World
 	end
 
 
-
-
 end
