@@ -295,6 +295,7 @@ class Game
 			
 					"
 					puts "The following items are on the floor:"
+
 					items = $hero.location.items
 					puts items.join(" ")
 			elsif get_cmds.include?(word1)
