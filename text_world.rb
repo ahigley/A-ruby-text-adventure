@@ -40,23 +40,30 @@ class Rooms < World
 		number = rand(3)
 		case number
 		when 1
-			@loot1 = Items.new
-			@items = [@loot1]	
+			item_gen2(1)
 		when 2
-			@loot1 = Items.new
-			@loot2 = Items.new
-			@items = [@loot1, @loot2]
+			item_gen2(2)
 		when 3
-			@loot1 = Items.new
-			@loot2 = Items.new
-			@loot3 = Items.new
-			@items = [@loot1, @loot2, @loot3]
+			item_gen2(3)
 		else
-			@loot1 = Items.new
-			@loot1.desc = "There are no items here."
-			@items = [@loot1]
+			@items = []
 		end
 	end
-
-
+	def item_gen2(number)
+		number.times do
+			type = ALL_ITEMS.sample
+		case type
+		when "Health_pot" 
+			@items.push(Health_pot.new)
+		when "Poison_pot" 
+			@items.push(Poison_pot.new)
+		when "Str_pot" 
+			@items.push(Str_pot.new)
+		when "Blank_scroll"
+			@items.push(Blank_scroll.new)
+		when "Smiley_scroll"
+			@items.push(Smiley_scroll.new)
+		end
+			end
+	end
 end
