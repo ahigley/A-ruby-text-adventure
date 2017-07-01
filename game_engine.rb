@@ -297,10 +297,17 @@ class Game
 					puts "The following items are on the floor:"
 
 					items = $hero.location.items
-					puts items.join(" ")
+					items.each do |item|
+						puts item.desc
+						end
 			elsif get_cmds.include?(word1)
 				if @word2 != nil
-					if $hero.location.items.include?(@word2)
+					#puts $hero.location.items.get_words
+					$hero.location.items.each do  item
+						puts item.get_words
+					end
+					puts $hero.location.items
+					if $hero.location.items.get_words.include?(@word2)
 						$hero.inv << @word2
 						$hero.location.items.delete_at($hero.location.items.index(@word2))
 					else

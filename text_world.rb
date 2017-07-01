@@ -27,11 +27,11 @@ class Rooms < World
 		choice = rand(1..3)
 		case choice
 		when 1
-			@desc = "You see... the first type of room!"
+			@desc = 'You see... the first type of room!'
 		when 2
-			@desc = "You see... the second type of room!"
+			@desc = 'You see... the second type of room!'
 		when 3
-			@desc = "You see... the third type of room!"
+			@desc = 'You see... the third type of room!'
 		end
 	end
 	#Currently item_gen is in no way connected to desc_gen -- this needs to be changed. desc_gen only has place holder generation descrsiptions at the moment. In future meaninful descriptions should pair with some sort of loot
@@ -40,23 +40,30 @@ class Rooms < World
 		number = rand(3)
 		case number
 		when 1
-			@loot1 = Items.new
-			@items = [@loot1]	
+			item_gen2(1)
 		when 2
-			@loot1 = Items.new
-			@loot2 = Items.new
-			@items = [@loot1, @loot2]
+			item_gen2(2)
 		when 3
-			@loot1 = Items.new
-			@loot2 = Items.new
-			@loot3 = Items.new
-			@items = [@loot1, @loot2, @loot3]
+			item_gen2(3)
 		else
-			@loot1 = Items.new
-			@loot1.desc = "There are no items here."
-			@items = [@loot1]
+			@items = []
 		end
 	end
-
-
+	def item_gen2(number)
+		number.times do
+			type = ALL_ITEMS.sample
+		case type
+		when 'Health_pot'
+			@items.push(Health_pot.new)
+		when 'Poison_pot'
+			@items.push(Poison_pot.new)
+		when 'Str_pot'
+			@items.push(Str_pot.new)
+		when 'Blank_scroll'
+			@items.push(Blank_sheet.new)
+		when 'Smiley_scroll'
+			@items.push(Smiley_scroll.new)
+		end
+			end
+	end
 end

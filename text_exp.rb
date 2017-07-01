@@ -22,7 +22,7 @@ class Enemy < World
 
 	def defeated?
 		@hp <= 0
-		puts "You have defeated the enemy"
+		puts 'You have defeated the enemy'
 		$hero.xp(@xpreward)
 		$hero.location.loot << @loot		
 	end
