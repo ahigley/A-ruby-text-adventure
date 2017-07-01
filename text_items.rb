@@ -29,12 +29,9 @@ end
 class Blank_sheet < Scroll
 	def initialize
 		super
-<<<<<<< HEAD
-=======
+
 	end
-	def effect(target)
-		puts "It seemed to have no effect!"	
->>>>>>> origin/master
+
 	end
 	def effect(target)
 		puts 'It seemed to have no effect!'
