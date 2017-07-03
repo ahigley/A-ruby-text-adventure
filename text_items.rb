@@ -30,11 +30,8 @@ class Blank_sheet < Scroll
 	def initialize
 		super
 
-<<<<<<< HEAD
-=======
-	end
 
->>>>>>> origin/master
+
 	end
 
 	def effect(target)
