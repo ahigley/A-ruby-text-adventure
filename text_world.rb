@@ -34,7 +34,7 @@ class Rooms < World
 			@desc = 'You see... the third type of room!'
 		end
 	end
-	#Currently item_gen is in no way connected to desc_gen -- this needs to be changed. desc_gen only has place holder generation descrsiptions at the moment. In future meaninful descriptions should pair with some sort of loot
+	#Currently item_gen is in no way connected to desc_gen -- this needs to be changed. desc_gen only has place holder generation descriptions at the moment. In future meaningful descriptions should pair with some sort of loot
 	#table. If the description generated is a treasure room, the chance of loot should be higher. Additionally an alchemists chamber should have a higher chance of generating potions. Presently this isn't represented in item_gen
 	def item_gen
 		number = rand(3)

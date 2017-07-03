@@ -1,4 +1,5 @@
 class Hero < World
+	include Fight
 	attr_accessor :level, :hp, :score, :xp, :buff, :str
 	attr_accessor :inv, :location, :xy
 
@@ -28,25 +29,11 @@ class Hero < World
 		@inv << thing
 	end
 
-	def use(thing)
-			if @inv.include?(thing)
-				case thing
-					when "pot"
-						puts"You chug the contents of the bottle."
-						$hero.heal(3)
-						delete(thing)
-					when "text"
-						puts"Looking closely, you can see a simple drawing of a face on the paper:
-
-						=)
-
-						"
-						delete(thing)
-					when "scroll"
-						puts"You read the scroll to produce a magical effect, but nothing happens!"
-						delete(thing)
-					end
-				puts "You don't have a #{thing} to use."
+	def use(thing, target)
+			if target == nil
+			thing.effect($hero)
+			else
+				thing.effect(target)
 			end
 	end
 	#delete(thing) is within Hero class but use, within the Game class, is really the driving force behind deleting things from the inventory. Drop would be another example. This method will likely be deleted and its functionality
@@ -103,10 +90,7 @@ class Hero < World
 		@level = amount
 	end
 
-	def heal(amount)
-		@hp += amount
-		@hp = [@hp,@max].min
-	end
+
 
 	def wound(amount)
 		@hp -= amount

@@ -13,20 +13,22 @@ class Game
 		game_start
 	end
 
-	#Parses user input into words, then disambiguates commands in the word_disamibig method, generally starting from @word1
+	#Parses user input into words, then disambiguates commands in the word_disambig method, generally starting from @word1
 	def choice(input)
 		words = input.to_s.split(" ")
 
 		@word1 = words[0]
 		@word2 = words[1]
 		@word3 = words[2]
+		@word4 = words[3]
+		@word5 = words[4]
 
 		@north_cmds = ["n", "up", "north"]
 		@east_cmds = ["e", "right", "east"]
 		@west_cmds = ["w", "left", "west"]
 		@south_cmds = ["s", "down", "south"]
 		@all_cmds << (@north_cmds + @east_cmds + @west_cmds + @south_cmds)
-		word_disambig(@word1, @word2, @word3)
+		word_disambig(@word1, @word2, @word3, @word4, @word5)
 	end
 		def move_check(word)
 			allowed = @north_cmds + @east_cmds + @west_cmds + @south_cmds
@@ -40,82 +42,7 @@ class Game
 					
 	#Since the Game class is essentially the game engine, most user actions are still here but there is a lot of room for rebuilding. Below you can see we're calling a method within $hero.
 	#It's probably going to have a separate class full of user actions alone at some point but for now, it is what it is.
-			def move(direction)
-				newroom = $hero.location.exits[direction]
-				puts "move"
-				p newroom
-				$hero.location = newroom
-				$hero.location.xy = newroom.xy
-		end
 
-	def check_room(direction, x, y)
-			xy_pos = "#{x}, #{y}"	
-		if @@all_rooms.has_key?(xy_pos) && (@@all_rooms[xy_pos] != nil)
-			check_exits(x, y)
-		else
-			generate(direction, x, y)
-		end
-	end
-
-
-	def check_exits(x, y)
-		n = y+1
-		s = y-1
-		e = x+1
-		w = x-1
-		north = "#{x}, #{n}"
-		south = "#{x}, #{s}"
-		east = "#{e}, #{y}"
-		west = "#{w}, #{y}"
-		room = @@all_rooms["#{x}, #{y}"]
-		if @@all_rooms.has_key?(east) && (@@all_rooms[east] != nil)
-			room.exits.merge!({"east" => @@all_rooms[east]})
-		elsif @@all_rooms.has_key?([west]) && (@@all_rooms[west] != nil)
-			room.exits.merge!({"west" => @@all_rooms[west]})
-		elsif @@all_rooms.has_key?([north]) && (@@all_rooms[north] != nil)
-			room.exits.merge!({"north" => @@all_rooms[north]})
-		elsif @@all_rooms.has_key?([south]) && (@@all_rooms[south] != nil)
-			room.exits.merge!({"south" => @@all_rooms[south]})
-		end
-	end
-	
-	def generate(direction, x, y)
-		@room = Rooms.new
-		@room.desc_gen
-		@room.item_gen
-		@room.xy = "#{x}, #{y}"
-		new_room = { @room.xy => @room}
-		@@all_rooms.merge!(new_room)
-		check_exits(x,y)
-		if direction == "north"
-			new_north = {"south" => $hero.location}
-			@room.exits.merge!(new_north)
-			north = {"north" => @room}
-			$hero.location.exits.merge!(north)
-		elsif direction == "south"
-			new_south = {"north" => $hero.location}
-			@room.exits.merge!(new_south)
-			south = {"south" => @room}
-			$hero.location.exits.merge!(south)
-		elsif direction == "east"
-			new_east = {"west" => $hero.location}
-			@room.exits.merge!(new_east)
-			east = {"east" => @room}
-			$hero.location.exits.merge!(east)
-		elsif direction == "west"
-			new_west = {"east" => $hero.location}
-			@room.exits.merge!(new_west)
-			west = {"west" => @room}
-			$hero.location.exits.merge!(west)
-		end
-		check_exits(x, y)
-		possible = (["north", "south", "east", "west"] - @room.exits.keys)
-		(rand(possible.count)).times do |gen|
-			actual = (possible - @room.exits.keys)
-			gen = actual.sample
-			@room.exits.merge!({gen => nil})
-		end
-	end
 
 
 #This is really the start of the algorithm responsible for generating new rooms. If rooms weren't drawn as you attempt to enter them, the algorithm could be kept separate from the move method. I like this way better
@@ -159,13 +86,7 @@ class Game
 					end
 				end
 		end
-		def move(direction)
-				newroom = $hero.location.exits[direction]
-				puts "move"
-				p newroom
-				$hero.location = newroom
-				$hero.location.xy = newroom.xy
-		end
+
 
 	def check_room(direction, x, y)
 			xy_pos = "#{x}, #{y}"	
@@ -266,7 +187,7 @@ class Game
 	#the elsif structure of evaluating word1 -- it may be worth reworking this in future. Word1_disambig -> word2_disambig. However, this hasn't been done now as generally evaluations of word2 branch off based on word1. That is 
 	#to say dump pot has a word2 value of pot but we can only evaluate it within the context of drop_cmds. At present its more orderly to have everything in one place. In future calling seperate methods such as drop_cmds_disambig
 	#might be a way of branching with maintaining readability.
-	def word_disambig(word1, word2, word3) 
+	def word_disambig(word1, word2, word3, word4, word5)
 			go_cmds = ["go",  "walk", "run", "move", "travel", "skip", "g", "m"]
 			fast_move_cmds = ["n", "s", "e", "w"]
 			look_cmds = ["look", "see", "l"]
@@ -280,6 +201,8 @@ class Game
 			@all_cmds << (look_cmds + get_cmds + drop_cmds)
 			if go_cmds.include?(word1)
 				move_disambig(word2)
+			elsif word1 == "ah"
+				$hero.heal(3)
 			elsif fast_move_cmds.include?(word1)
 				move_disambig(word1)
 			elsif look_cmds.include?(word1)
@@ -347,13 +270,22 @@ class Game
 				puts "Thanks for playing!"
 				exit
 			elsif use_cmds.include?(word1)
-				if $hero.inv.include?(@word2)
-					$hero.use(@word2)	
-				else
+			if !$hero.inv.empty?
+					$hero.inv.each do |item|
+					if item.get_words.include?(word3)
+						if item.color == word2
+							$hero.use(item, word4)
+						end
+					else
 					puts"You must get an item before you can use it."
-				end
-			else 
+					end
+					end
+			else
+				puts 'You must get an item before you can use it.'
+			end
+			else
 				puts "I do not recognize that command. Please try again."
+
 			end
 				
 

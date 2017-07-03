@@ -71,7 +71,7 @@ class Health_pot < Potion
 		
 	end
 	def effect(target)
-		target.hp += 3
+		target.heal(3)
 	end
 end
 		

@@ -2,9 +2,9 @@ puts "This game is under development. If you're confused about something e-mail 
 # An attempt at making the files a bit more manageable
 require_relative 'game_engine.rb'
 require_relative 'text_world.rb'
+require_relative 'fight.rb'
 require_relative 'text_hero.rb'
 require_relative 'text_items.rb'	
-		
 
 
 #Interaction between enemy class objects and hero class to come -- probably within the Game class.
