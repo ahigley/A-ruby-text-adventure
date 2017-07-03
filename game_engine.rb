@@ -302,27 +302,43 @@ class Game
 						end
 			elsif get_cmds.include?(word1)
 				if @word2 != nil
-					#puts $hero.location.items.get_words
-					$hero.location.items.each do  item
-						puts item.get_words
+					if $hero.location.items.size != 0
+					$hero.location.items.each do |item|
+						if item.get_words.include?(@word2)
+							$hero.inv << item
+							$hero.location.items.delete_at($hero.location.items.index(item))
+							break
+						else
+							puts "There is no #{@word2} to get!"
+							break
+						end
 					end
-					puts $hero.location.items
-					if $hero.location.items.get_words.include?(@word2)
-						$hero.inv << @word2
-						$hero.location.items.delete_at($hero.location.items.index(@word2))
 					else
 						puts "There is no #{@word2} to get!"
 					end
+
 				else
 					puts "What do you want to get?"
 				end
 			elsif drop_cmds.include?(word1)
-				if $hero.location.items.include?(@word2)
-					$hero.location.items << thing
-					$hero.inv.delete_at($hero.inv.index(@word2))
-				elsif
-					puts "You have no #{@word2} to drop!"
+				if @word2 != nil
+
+					if $hero.inv.size != 0
+				$hero.inv.each do |item|
+					if item.get_words.include?(@word2)
+						$hero.location.items << item
+						$hero.inv.delete_at($hero.inv.index(item))
+						break
+					else
+						puts "You have no #{@word2} to drop"
+						break
+					end
 				end
+					else
+						puts "You have no #{@word2} to drop!"
+
+					end
+					end
 			elsif status_cmds.include?(word1)
 				$hero.status_check
 			elsif inv_cmds.include?(word1)

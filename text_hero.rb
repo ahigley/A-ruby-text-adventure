@@ -58,7 +58,9 @@ class Hero < World
 		if @inv.empty? == true
 			puts"You do not have anything in your inventory."
 		elsif @inv.empty? !=true
-			@inv.each { |x| puts"#{x}" }
+			puts"Your inventory contains the following items:\n\n"
+			@inv.each { |x| puts"#{x.desc}" }
+			puts "\n"
 		end
 	end
 	#The next two methods level? and max_up deal with hit points and experience points/level. Right now the Enemy class has been created but interaction between the hero and enemies has not. Level, experience, and health will become

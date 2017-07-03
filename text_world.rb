@@ -53,7 +53,6 @@ class Rooms < World
 		number.times do
 			type = ALL_ITEMS.sample
 		case type
-<<<<<<< HEAD
 		when 'Health_pot'
 			@items.push(Health_pot.new)
 		when 'Poison_pot'
@@ -63,17 +62,6 @@ class Rooms < World
 		when 'Blank_scroll'
 			@items.push(Blank_sheet.new)
 		when 'Smiley_scroll'
-=======
-		when "Health_pot" 
-			@items.push(Health_pot.new)
-		when "Poison_pot" 
-			@items.push(Poison_pot.new)
-		when "Str_pot" 
-			@items.push(Str_pot.new)
-		when "Blank_scroll"
-			@items.push(Blank_scroll.new)
-		when "Smiley_scroll"
->>>>>>> origin/master
 			@items.push(Smiley_scroll.new)
 		end
 			end
