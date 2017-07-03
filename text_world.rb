@@ -62,10 +62,6 @@ class Rooms < World
 		when 'Blank_scroll'
 			@items.push(Blank_sheet.new)
 		when 'Smiley_scroll'
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 			@items.push(Smiley_scroll.new)
 		end
 			end
