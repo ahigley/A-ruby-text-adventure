@@ -1,11 +1,12 @@
 class Hero < World
 	include Fight
-	attr_accessor :level, :hp, :score, :xp, :buff, :str
+	attr_accessor :level, :hp, :score, :xp, :buff, :str, :desc
 	attr_accessor :inv, :location, :xy
 
 	BASEHP = 10
 	
 	def initialize
+		@desc = "Hero"
 		@location = $start_room
 		@str = 1
 		@level = 1
@@ -31,7 +32,7 @@ class Hero < World
 
 	def use(thing, target)
 			if target == nil
-			thing.effect($hero)
+			thing.effect(self)
 			else
 				thing.effect(target)
 			end
@@ -89,12 +90,6 @@ class Hero < World
 	def level_up(amount)
 		@level = amount
 	end
-
-
-
-	def wound(amount)
-		@hp -= amount
-	end	
 
 	def bonus(amount)
 		@score += amount

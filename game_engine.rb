@@ -30,15 +30,6 @@ class Game
 		@all_cmds << (@north_cmds + @east_cmds + @west_cmds + @south_cmds)
 		word_disambig(@word1, @word2, @word3, @word4, @word5)
 	end
-		def move_check(word)
-			allowed = @north_cmds + @east_cmds + @west_cmds + @south_cmds
-
-			if allowed.include?(word)
-				move_disambig(word)
-			else
-				puts "You cannot go #{word}"
-			end
-		end
 					
 	#Since the Game class is essentially the game engine, most user actions are still here but there is a lot of room for rebuilding. Below you can see we're calling a method within $hero.
 	#It's probably going to have a separate class full of user actions alone at some point but for now, it is what it is.
@@ -181,8 +172,9 @@ class Game
 	end
 	def resolve
 		$hero.level?
+
 	end
-	#Word disambiguation begins by evaluating word1. In some cases that's all that's needed. If word2 is considered relevant word2 is evaluated as well. Right now, for commands like "look" word2 could be anything so 
+	#Word disambiguation begins by evaluating word1. In some cases that's all that's needed. If word2 is consided relevant word2 is evaluated as well. Right now, for commands like "look" word2 could be anything so 
 	#look around is functionally the same as look. The various cmd arrays contain all valid synonymns for a given command. This way new synonymns can be added with  minimal effort. Currently word2 evaluations happen within
 	#the elsif structure of evaluating word1 -- it may be worth reworking this in future. Word1_disambig -> word2_disambig. However, this hasn't been done now as generally evaluations of word2 branch off based on word1. That is 
 	#to say dump pot has a word2 value of pot but we can only evaluate it within the context of drop_cmds. At present its more orderly to have everything in one place. In future calling seperate methods such as drop_cmds_disambig
@@ -217,6 +209,14 @@ class Game
 					puts "
 			
 					"
+          puts "monsters"
+          puts $hero.location.monsters
+          if $hero.location.monsters.size != 0
+            puts "The following enemies are here:"
+            $hero.location.monsters.each do |mob|
+              puts mob.desc
+            end
+          end
 					puts "The following items are on the floor:"
 
 					items = $hero.location.items
@@ -225,9 +225,14 @@ class Game
 						end
 			elsif get_cmds.include?(word1)
 				if @word2 != nil
-					if $hero.location.items.size != 0
-					$hero.location.items.each do |item|
-						if item.get_words.include?(@word2)
+          if $hero.location.items.size !=0
+            $hero.location.items.each do |item|
+							puts item.perm_id
+              if item.perm_id == @word2 && item.get_words.include?(@word3)
+                $hero.inv << item
+                $hero.location.items.delete_at($hero.location.items.index(item))
+                break
+					elsif item.get_words.include?(@word2)
 							$hero.inv << item
 							$hero.location.items.delete_at($hero.location.items.index(item))
 							break
@@ -273,7 +278,9 @@ class Game
 			if !$hero.inv.empty?
 					$hero.inv.each do |item|
 					if item.get_words.include?(word3)
-						if item.color == word2
+						puts item.perm_id
+						if item.perm_id == word2
+							puts "flag"
 							$hero.use(item, word4)
 						end
 					else

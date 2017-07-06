@@ -8,7 +8,7 @@ class World < Game
 	
 end		
 class Rooms < World
-	attr_accessor :desc, :exits, :items, :xy
+	attr_accessor :desc, :exits, :items, :xy, :monsters
 	# @@room_count currently serves no purpose, but its long term purpose to set score/mob difficulty. Additionally if we want a 'stairs down' option after a certain number of rooms like one might find in diablo or pixel dungeon
 	# then generating stairs after a certain number of rooms could also be possible. Currently this is not implemented into the procedural generation algorithm.
 	@@room_count = 0
@@ -17,6 +17,7 @@ class Rooms < World
 		@exits = Hash.new
 		@items = Array.new
 		@xy = String.new
+		@monsters = Array.new
 	end
 		
 
@@ -34,6 +35,24 @@ class Rooms < World
 			@desc = 'You see... the third type of room!'
 		end
 	end
+	def enemy_gen
+		number = rand(4)
+		case number
+			when 1
+				@monsters[0] = Enemy.new
+			when 2
+				@monsters[0] = Enemy.new
+				@monsters[1] = Enemy.new
+			when 3
+				@monsters[0] = Enemy.new
+				@monsters[1] = Enemy.new
+				@monsters[2] = Enemy.new
+			when 4
+				@monsters = []
+			else @monsters = []
+		end
+	end
+
 	#Currently item_gen is in no way connected to desc_gen -- this needs to be changed. desc_gen only has place holder generation descriptions at the moment. In future meaningful descriptions should pair with some sort of loot
 	#table. If the description generated is a treasure room, the chance of loot should be higher. Additionally an alchemists chamber should have a higher chance of generating potions. Presently this isn't represented in item_gen
 	def item_gen
