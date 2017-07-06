@@ -123,8 +123,6 @@ class Str_pot < Potion
 		@debuff = true
 	end
 	def effect(target)
-		puts "desc"
-		puts target.desc
 		target.str += 1
 		puts "#{target.desc} is now stronger"
 	end

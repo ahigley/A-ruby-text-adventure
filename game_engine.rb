@@ -224,30 +224,30 @@ class Game
 						puts item.desc
 						end
 			elsif get_cmds.include?(word1)
-				if @word2 != nil
-          if $hero.location.items.size !=0
-            $hero.location.items.each do |item|
-							puts item.perm_id
-              if item.perm_id == @word2 && item.get_words.include?(@word3)
-                $hero.inv << item
-                $hero.location.items.delete_at($hero.location.items.index(item))
-                break
-					elsif item.get_words.include?(@word2)
-							$hero.inv << item
-							$hero.location.items.delete_at($hero.location.items.index(item))
-							break
-						else
-							puts "There is no #{@word2} to get!"
-							break
-						end
-					end
-					else
-						puts "There is no #{@word2} to get!"
-					end
-
-				else
-					puts "What do you want to get?"
-				end
+				getting
+				#if @word2 != nil
+       #   if $hero.location.items.size !=0
+       #     $hero.location.items.each do |item|
+        #      if item.perm_id == @word2 && item.get_words.include?(@word3)
+         #       $hero.inv << item
+          #      $hero.location.items.delete_at($hero.location.items.index(item))
+         #       break
+				#	elsif item.get_words.include?(@word2)
+			#				$hero.inv << item
+			#				$hero.location.items.delete_at($hero.location.items.index(item))
+			#				break
+			#			else
+			#				puts "There is no #{@word2} to get!"
+			#				break
+			#			end
+			#		end
+			#		else
+			#			puts "There is no #{@word2} to get!"
+			#		end
+#
+#				else
+#					puts "What do you want to get?"
+#				end
 			elsif drop_cmds.include?(word1)
 				if @word2 != nil
 
@@ -275,30 +275,55 @@ class Game
 				puts "Thanks for playing!"
 				exit
 			elsif use_cmds.include?(word1)
-			if !$hero.inv.empty?
-					$hero.inv.each do |item|
-					if item.get_words.include?(word3)
-						puts item.perm_id
-						if item.perm_id == word2
-							puts "flag"
-							$hero.use(item, word4)
-						end
-					else
-					puts"You must get an item before you can use it."
-					end
-					end
-			else
-				puts 'You must get an item before you can use it.'
-			end
+						using
 			else
 				puts "I do not recognize that command. Please try again."
 
 			end
-				
+	end
 
+def getting
+	if @word2 != nil
+		if $hero.location.items.size !=0
+			$hero.location.items.each do |item|
+				if item.perm_id == @word2 && item.get_words.include?(@word3)
+					$hero.inv << item
+					$hero.location.items.delete_at($hero.location.items.index(item))
+					break
+				elsif item.get_words.include?(@word2)
+					$hero.inv << item
+					$hero.location.items.delete_at($hero.location.items.index(item))
+					break
+				else
+					puts "There is no #{@word2} to get!"
+					break
+				end
+			end
+		else
+			puts "There is no #{@word2} to get!"
 		end
 
+	else
+		puts "What do you want to get?"
+	end
+end
 
+	def using
+		if !$hero.inv.empty?
+			$hero.inv.each do |item|
+				if item.get_words.include?(@word3)
+					if item.perm_id == @word2
+						$hero.use(item, @word4)
+						$hero.location.inv.delete_at($hero.location.inv.index(item))
+					end
+				else
+					puts"You must get an item before you can use it."
+				end
+			end
+		else
+			puts 'You must get an item before you can use it.'
+		end
+	end
 
 	def game_start
 		while $hero.life? 
