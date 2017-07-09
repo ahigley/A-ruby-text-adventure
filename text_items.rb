@@ -6,7 +6,7 @@ ALL_ITEMS = %w(Health_pot Poison_pot Str_pot Blank_scroll Smiley_scroll)
 
 class Scroll
 	ALL_SCROLLS = ['Blank sheet', 'Smiley Sheet']
-	attr_accessor :desc, :type, :symbol, :get_words
+	attr_accessor :desc, :type, :symbol, :get_words, :symbol_set, :perm_id
 	@@symbols = %w(! @ # $ %)
 	def initialize
 		@symbol = @@symbols.sample
@@ -18,18 +18,17 @@ class Scroll
 end
 
 class Smiley_scroll < Scroll
-	attr_accessor  :perm_id, :symbol_set
-	@@symbol_set = false
+@@symbol_set = false
 	def initialize
 		super
-		if @@symbol_set = false
-		@@perm_id = @symbol
+		if @@symbol_set == false
+			@@perm_id = @symbol
 			@@symbol_set = true
 		end
 		@perm_id = @@perm_id
 		@desc = "A sheet with a #{@@perm_id} written on it."
-
 	end
+
 
 
 
@@ -39,7 +38,6 @@ class Smiley_scroll < Scroll
 end
 
 class Blank_sheet < Scroll
-	attr_accessor  :perm_id, :symbol_set
 	@@symbol_set = false
 	def initialize
 		super
@@ -49,8 +47,9 @@ class Blank_sheet < Scroll
 		end
 		@perm_id = @@perm_id
 		@desc = "A sheet with a #{@@perm_id} written on it."
-
 	end
+
+
 
 	def effect(target)
 		puts 'It seemed to have no effect!'
@@ -127,4 +126,5 @@ class Str_pot < Potion
 		puts "#{target.desc} is now stronger"
 	end
 end
+
 

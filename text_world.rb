@@ -18,6 +18,7 @@ class Rooms < World
 		@items = Array.new
 		@xy = String.new
 		@monsters = Array.new
+		enemy_gen
 	end
 		
 
@@ -28,11 +29,11 @@ class Rooms < World
 		choice = rand(1..3)
 		case choice
 		when 1
-			@desc = 'You see... the first type of room!'
+			@desc = 'You are in a meadow full of tall grass'
 		when 2
-			@desc = 'You see... the second type of room!'
+			@desc = 'You are in a dense forest'
 		when 3
-			@desc = 'You see... the third type of room!'
+			@desc = 'You are in a rocky clearing'
 		end
 	end
 	def enemy_gen
@@ -52,6 +53,7 @@ class Rooms < World
 			else @monsters = []
 		end
 	end
+
 
 	#Currently item_gen is in no way connected to desc_gen -- this needs to be changed. desc_gen only has place holder generation descriptions at the moment. In future meaningful descriptions should pair with some sort of loot
 	#table. If the description generated is a treasure room, the chance of loot should be higher. Additionally an alchemists chamber should have a higher chance of generating potions. Presently this isn't represented in item_gen

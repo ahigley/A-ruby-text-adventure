@@ -10,6 +10,7 @@ class Game
 	def initialize
 		@@all_rooms ={"0, 0" => $start_room, "0, 1" => nil, "-1, 0" => nil, "1, 0" => nil }
 		@all_cmds = Array.new
+		looking
 		game_start
 	end
 
@@ -172,6 +173,12 @@ class Game
 	end
 	def resolve
 		$hero.level?
+		if $hero.location.monsters.size != 0
+			$hero.location.monsters.each do |mob|
+				mob.attack($hero)
+				puts "#{mob.desc} attacks you!"
+			end
+		end
 
 	end
 	#Word disambiguation begins by evaluating word1. In some cases that's all that's needed. If word2 is consided relevant word2 is evaluated as well. Right now, for commands like "look" word2 could be anything so 
@@ -189,84 +196,45 @@ class Game
 			inv_cmds = ["inv", "i", "inventory", "loot", "stuff", "gear"]
 			quit_cmds = ["q", "quit", "exit", "end"]
 			use_cmds = ["use"]
+			attack_cmds = ["attack", "hit"]
 			@all_cmds << go_cmds
 			@all_cmds << (look_cmds + get_cmds + drop_cmds)
+			first = true
 			if go_cmds.include?(word1)
-				move_disambig(word2)
+				if $hero.location.monsters.size != 0
+					puts 'Your enemies are blocking the exit'
+				else
+					move_disambig(word2)
+					looking
+				end
 			elsif word1 == "ah"
-				$hero.heal(3)
-			elsif fast_move_cmds.include?(word1)
-				move_disambig(word1)
-			elsif look_cmds.include?(word1)
-					puts "
-					"
-					p $hero.location.desc.to_s
-					puts "
-					"
-					puts "Exits can be found in the following directions:"
-					exits = $hero.location.exits.keys
-					puts exits.join(" ")
-					puts "
-			
-					"
-          puts "monsters"
-          puts $hero.location.monsters
-          if $hero.location.monsters.size != 0
-            puts "The following enemies are here:"
-            $hero.location.monsters.each do |mob|
-              puts mob.desc
-            end
-          end
-					puts "The following items are on the floor:"
-
-					items = $hero.location.items
-					items.each do |item|
-						puts item.desc
-						end
-			elsif get_cmds.include?(word1)
-				getting
-				#if @word2 != nil
-       #   if $hero.location.items.size !=0
-       #     $hero.location.items.each do |item|
-        #      if item.perm_id == @word2 && item.get_words.include?(@word3)
-         #       $hero.inv << item
-          #      $hero.location.items.delete_at($hero.location.items.index(item))
-         #       break
-				#	elsif item.get_words.include?(@word2)
-			#				$hero.inv << item
-			#				$hero.location.items.delete_at($hero.location.items.index(item))
-			#				break
-			#			else
-			#				puts "There is no #{@word2} to get!"
-			#				break
-			#			end
-			#		end
-			#		else
-			#			puts "There is no #{@word2} to get!"
-			#		end
-#
-#				else
-#					puts "What do you want to get?"
-#				end
-			elsif drop_cmds.include?(word1)
-				if @word2 != nil
-
-					if $hero.inv.size != 0
-				$hero.inv.each do |item|
-					if item.get_words.include?(@word2)
-						$hero.location.items << item
-						$hero.inv.delete_at($hero.inv.index(item))
-						break
-					else
-						puts "You have no #{@word2} to drop"
-						break
+				$hero.heal(30)
+			elsif word1 == "gen"
+				$hero.location.item_gen
+			elsif word1 == "boom"
+				def boom
+				$hero.location.monsters.each do |mob|
+					mob.wound(10)
+					dead = mob.defeated?
+					if dead == true
+						$hero.location.monsters.delete_at($hero.location.monsters.index(mob))
 					end
 				end
-					else
-						puts "You have no #{@word2} to drop!"
-
-					end
-					end
+				end
+				boom
+				boom
+				boom
+			elsif word1 == 'god'
+				$hero.hp = 100
+			elsif fast_move_cmds.include?(word1)
+				move_disambig(word1)
+				looking
+			elsif look_cmds.include?(word1)
+				looking
+			elsif get_cmds.include?(word1)
+				getting
+			elsif drop_cmds.include?(word1)
+				dropping
 			elsif status_cmds.include?(word1)
 				$hero.status_check
 			elsif inv_cmds.include?(word1)
@@ -276,6 +244,8 @@ class Game
 				exit
 			elsif use_cmds.include?(word1)
 						using
+			elsif attack_cmds.include?(word1)
+				attacking
 			else
 				puts "I do not recognize that command. Please try again."
 
@@ -285,19 +255,23 @@ class Game
 def getting
 	if @word2 != nil
 		if $hero.location.items.size !=0
+			gotten = false
 			$hero.location.items.each do |item|
 				if item.perm_id == @word2 && item.get_words.include?(@word3)
 					$hero.inv << item
 					$hero.location.items.delete_at($hero.location.items.index(item))
-					break
-				elsif item.get_words.include?(@word2)
-					$hero.inv << item
-					$hero.location.items.delete_at($hero.location.items.index(item))
-					break
-				else
-					puts "There is no #{@word2} to get!"
+					gotten = true
 					break
 				end
+				if item.get_words.include?(@word2)
+					$hero.inv << item
+					$hero.location.items.delete_at($hero.location.items.index(item))
+					gotten = true
+					break
+				end
+			end
+			if gotten == false
+				puts "There is no #{@word2} to get!"
 			end
 		else
 			puts "There is no #{@word2} to get!"
@@ -314,10 +288,11 @@ end
 				if item.get_words.include?(@word3)
 					if item.perm_id == @word2
 						$hero.use(item, @word4)
-						$hero.location.inv.delete_at($hero.location.inv.index(item))
+						$hero.inv.delete_at($hero.inv.index(item))
+						break
 					end
 				else
-					puts"You must get an item before you can use it."
+					puts 'You must get an item before you can use it.'
 				end
 			end
 		else
@@ -325,10 +300,73 @@ end
 		end
 	end
 
+	def dropping
+		if @word2 != nil
+
+			if $hero.inv.size != 0
+				$hero.inv.each do |item|
+					if item.get_words.include?(@word2)
+						$hero.location.items << item
+						$hero.inv.delete_at($hero.inv.index(item))
+						break
+					else
+						puts "You have no #{@word2} to drop"
+						break
+					end
+				end
+			else
+				puts "You have no #{@word2} to drop!"
+
+			end
+		end
+	end
+
+	def looking
+		puts "
+				 "
+		puts $hero.location.desc
+		puts "
+				 "
+		puts "Exits can be found in the following directions:"
+		exits = $hero.location.exits.keys
+		puts exits.join(" ")
+		puts "
+
+				 "
+		if $hero.location.monsters.size != 0
+			puts "The following enemies are here:"
+			$hero.location.monsters.each do |mob|
+				puts "#{mob.desc}"
+			end
+		end
+		puts "The following items are on the floor:"
+		puts "-" * 30
+
+		items = $hero.location.items
+		items.each do |item|
+			puts item.desc
+		end
+		puts "-" * 30
+
+	end
+def attacking
+	$hero.location.monsters.each do |mob|
+		if @word2 == mob.id
+			$hero.attack(mob)
+			puts "You attack #{mob.desc.downcase}"
+			dead = mob.defeated?
+			if dead == true
+				$hero.location.monsters.delete_at($hero.location.monsters.index(mob))
+			end
+		else
+			puts "There is no monster #{@word2} to attack"
+		end
+	end
+end
 	def game_start
-		while $hero.life? 
+		while $hero.life?
 			puts "What is your next move, brave hero?"
-			@input = gets.chomp.to_s	
+			@input = gets.chomp.to_s
 			choice(@input)
 			resolve
 
