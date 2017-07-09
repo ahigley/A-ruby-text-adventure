@@ -1,4 +1,5 @@
 # A-ruby-text-adventure
 
 This text-adventure is a project that I am working on as a way to better learn ruby
-RECOMMENDED: Download everything; run ruby text_exp.rb
+
+To play the game download and run the .exe file
