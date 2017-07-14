@@ -9,8 +9,14 @@ module Fight
     @hp -= amount
   end
 
-  def attack(target)
-    target.wound(1)
+  def attack(target, str)
+    to_hit = rand(0..8)
+    if to_hit <= str
+      target.wound(str)
+      puts "#{target.desc} is hit for #{str} damage"
+    else
+      puts "#{target.desc} evades the attack"
+    end
   end
 
 end

@@ -1,11 +1,11 @@
-ALL_ITEMS = %w(Health_pot Poison_pot Str_pot Blank_scroll Smiley_scroll)
+ALL_ITEMS = %w(Health_pot Poison_pot Str_pot Blank_scroll Fire_scroll)
 
 
 
 
 
 class Scroll
-	ALL_SCROLLS = ['Blank sheet', 'Smiley Sheet']
+	ALL_SCROLLS = ['Blank sheet', 'Fire Sheet']
 	attr_accessor :desc, :type, :symbol, :get_words, :symbol_set, :perm_id
 	@@symbols = %w(! @ # $ %)
 	def initialize
@@ -17,7 +17,7 @@ class Scroll
 
 end
 
-class Smiley_scroll < Scroll
+class Fire_scroll < Scroll
 @@symbol_set = false
 	def initialize
 		super
@@ -29,11 +29,16 @@ class Smiley_scroll < Scroll
 		@desc = "A sheet with a #{@@perm_id} written on it."
 	end
 
-
-
-
 	def effect(target)
-		puts "It's just a sheet of paper with a smiley face on it."
+				puts 'Fire bursts from the scroll scorching your enemies'
+				copy = $hero.location.monsters.clone
+				$hero.location.monsters.each do |mob|
+					mob.wound(1)
+					if mob.defeated?
+						copy.delete_at(copy.index(mob))
+					end
+				end
+			$hero.location.monsters = copy
 	end
 end
 

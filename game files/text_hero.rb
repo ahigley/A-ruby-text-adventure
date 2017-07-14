@@ -1,6 +1,6 @@
 class Hero < World
 	include Fight
-	attr_accessor :level, :hp, :score, :xp, :buff, :str, :desc
+	attr_accessor :level, :hp, :score, :xp, :buff, :str, :desc, :max
 	attr_accessor :inv, :location, :xy
 
 	BASEHP = 10
@@ -60,15 +60,25 @@ class Hero < World
 			
 		elsif 300 > @xp && @xp  >= 100
 			level_up(2)
+			old_max = self.max
 			max_up(2) 
-			
+			new_max = self.max
+			diff = new_max - old_max
+			self.heal(diff)
 		elsif 900 > @xp && @xp  >= 300
 			level_up(3)
+			old_max = self.max
 			max_up(3) 
-
+			new_max = self.max
+			diff = new_max - old_max
+			self.heal(diff)
 		elsif @xp >= 900
 			level_up(4)
-			max_up(4) 
+			old_max = self.max
+			max_up(4)
+			new_max = self.max
+			diff = new_max - old_max
+			self.heal(diff)
 		end
 	end
 

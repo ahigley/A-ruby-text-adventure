@@ -1,12 +1,14 @@
 #Interaction between enemy class objects and hero class to come -- probably within the Game class.
 class Enemy < World
   include Fight
-  attr_accessor :hp, :dmg, :xpreward, :loot, :desc, :id
+  attr_accessor :hp, :dmg, :xpreward, :loot, :desc, :id, :str
 
   BASEMOBHP = 1
 
   def initialize
+    @str = 1
     @hp = BASEMOBHP
+
     @dmg = 1
     @xpreward = 75
     @loot = []
@@ -28,14 +30,13 @@ class Enemy < World
   end
 
   def defeated?
-   if
-   @hp <= 0
-     puts 'You have defeated the enemy'
+   if @hp <= 0
+     puts "You have defeated the #{id}"
      $hero.xp(@xpreward)
       $hero.bonus(100)
-     return true
+     true
    else
-     return false
+     false
    end
 
   end

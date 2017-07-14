@@ -24,11 +24,7 @@ class Game
 		@word4 = words[3]
 		@word5 = words[4]
 
-		@north_cmds = ["n", "up", "north"]
-		@east_cmds = ["e", "right", "east"]
-		@west_cmds = ["w", "left", "west"]
-		@south_cmds = ["s", "down", "south"]
-		@all_cmds << (@north_cmds + @east_cmds + @west_cmds + @south_cmds)
+
 		word_disambig(@word1, @word2, @word3, @word4, @word5)
 	end
 					
@@ -172,14 +168,23 @@ class Game
 		end
 	end
 	def resolve
+		current = $hero.level
 		$hero.level?
-		if $hero.location.monsters.size != 0
+		if current < $hero.level
+			puts "Level up!"
+		end
+		if $hero.location.monsters.size != 0 && $hero.location.time > 0
 			$hero.location.monsters.each do |mob|
-				mob.attack($hero)
 				puts "#{mob.desc} attacks you!"
+				mob.attack($hero, mob.str)
 			end
 		end
-
+		$hero.location.time += 1
+		number = $hero.location.counter
+		if number >= 10
+			puts 'You survived ten rooms -- you win!'
+			exit
+		end
 	end
 	#Word disambiguation begins by evaluating word1. In some cases that's all that's needed. If word2 is consided relevant word2 is evaluated as well. Right now, for commands like "look" word2 could be anything so 
 	#look around is functionally the same as look. The various cmd arrays contain all valid synonymns for a given command. This way new synonymns can be added with  minimal effort. Currently word2 evaluations happen within
@@ -199,7 +204,6 @@ class Game
 			attack_cmds = ["attack", "hit"]
 			@all_cmds << go_cmds
 			@all_cmds << (look_cmds + get_cmds + drop_cmds)
-			first = true
 			if go_cmds.include?(word1)
 				if $hero.location.monsters.size != 0
 					puts 'Your enemies are blocking the exit'
@@ -207,25 +211,38 @@ class Game
 					move_disambig(word2)
 					looking
 				end
-			elsif word1 == "ah"
-				$hero.heal(30)
-			elsif word1 == "gen"
-				$hero.location.item_gen
-			elsif word1 == "boom"
-				def boom
-				$hero.location.monsters.each do |mob|
-					mob.wound(10)
-					dead = mob.defeated?
-					if dead == true
-						$hero.location.monsters.delete_at($hero.location.monsters.index(mob))
-					end
-				end
-				end
-				boom
-				boom
-				boom
-			elsif word1 == 'god'
-				$hero.hp = 100
+			elsif word1 == 'help'
+				puts 'some commands:
+							go [direction]
+							get [thing]
+							get [type] [thing] Example: get ! scroll
+							use [type] [thing] Example: use orange bottle
+							inv - display inventory
+							attack [type]
+							drop [thing]
+							look - gives information about the room/what you can see
+							status - displays information about your hp etc.
+							q - quits the game'
+				# Some developer commands commented out in case they are needed again later
+			#elsif word1 == "ah"
+			#	$hero.heal(30)
+			#elsif word1 == "gen"
+			#	$hero.location.item_gen
+			#elsif word1 == "boom"
+			#	def boom
+			#	$hero.location.monsters.each do |mob|
+			#		mob.wound(10)
+			#		dead = mob.defeated?
+			#		if dead == true
+			#			$hero.location.monsters.delete_at($hero.location.monsters.index(mob))
+			#		end
+			#	end
+			#	end
+			#	boom
+			#	boom
+			#	boom
+			#elsif word1 == 'god'
+			#	$hero.hp = 100
 			elsif fast_move_cmds.include?(word1)
 				move_disambig(word1)
 				looking
@@ -287,7 +304,15 @@ end
 			$hero.inv.each do |item|
 				if item.get_words.include?(@word3)
 					if item.perm_id == @word2
-						$hero.use(item, @word4)
+						if @word4 == nil
+						$hero.use(item, self)
+						else
+						$hero.location.monsters.each do |mob|
+							if @word4 = mob.id
+								$hero.use(item, mob)
+							end
+						end
+						end
 						$hero.inv.delete_at($hero.inv.index(item))
 						break
 					end
@@ -352,8 +377,8 @@ end
 def attacking
 	$hero.location.monsters.each do |mob|
 		if @word2 == mob.id
-			$hero.attack(mob)
 			puts "You attack #{mob.desc.downcase}"
+			$hero.attack(mob, $hero.str)
 			dead = mob.defeated?
 			if dead == true
 				$hero.location.monsters.delete_at($hero.location.monsters.index(mob))

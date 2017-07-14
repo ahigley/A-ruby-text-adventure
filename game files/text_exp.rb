@@ -1,4 +1,5 @@
 puts "This game is under development. If you're confused about something e-mail me at addison.higley@gmail.com"
+puts "Type help for help with commands"
 # An attempt at making the files a bit more manageable
 require_relative 'game_engine.rb'
 require_relative 'text_world.rb'
