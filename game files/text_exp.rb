@@ -16,6 +16,10 @@ $start_room.exits = { "north" => nil,
 			"west" => nil,
      			 "east" => nil 
 		}
+$start_room.monsters.count.times do
+  $start_room.monsters.pop
+end
+$start_room.items << Health_pot.new
 World.new
 $hero = Hero.new
 Game.new

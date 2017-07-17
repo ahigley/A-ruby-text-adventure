@@ -305,7 +305,7 @@ end
 				if item.get_words.include?(@word3)
 					if item.perm_id == @word2
 						if @word4 == nil
-						$hero.use(item, self)
+						$hero.use(item, nil)
 						else
 						$hero.location.monsters.each do |mob|
 							if @word4 = mob.id
@@ -383,8 +383,10 @@ def attacking
 			if dead == true
 				$hero.location.monsters.delete_at($hero.location.monsters.index(mob))
 			end
+			break
+			break
 		else
-			puts "There is no monster #{@word2} to attack"
+			puts "There is no #{@word2} to attack"
 		end
 	end
 end

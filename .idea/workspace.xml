@@ -2,15 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5911a0a1-4d6f-4eb0-856a-b882e0f43304" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text_exp.exe" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/A-ruby-text-adventure.iml" afterPath="$PROJECT_DIR$/.idea/A-ruby-text-adventure.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game files/Enemy.rb" afterPath="$PROJECT_DIR$/game files/Enemy.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game files/fight.rb" afterPath="$PROJECT_DIR$/game files/fight.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game files/game_engine.rb" afterPath="$PROJECT_DIR$/game files/game_engine.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game files/text_exp.rb" afterPath="$PROJECT_DIR$/game files/text_exp.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game files/text_hero.rb" afterPath="$PROJECT_DIR$/game files/text_hero.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game files/text_items.rb" afterPath="$PROJECT_DIR$/game files/text_items.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game files/text_world.rb" afterPath="$PROJECT_DIR$/game files/text_world.rb" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,7 +15,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/A_ruby_text_adventure@text_exp.coverage" NAME="text_exp Coverage Results" MODIFIED="1499620016383" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="A-ruby-text-adventure" />
-    <SUITE FILE_PATH="coverage/A_ruby_text_adventure@text_exp__1_.coverage" NAME="text_exp (1) Coverage Results" MODIFIED="1500065943296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/game files" MODULE_NAME="A-ruby-text-adventure" />
+    <SUITE FILE_PATH="coverage/A_ruby_text_adventure@text_exp__1_.coverage" NAME="text_exp (1) Coverage Results" MODIFIED="1500306726861" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/game files" MODULE_NAME="A-ruby-text-adventure" />
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -41,8 +35,8 @@
       <file leaf-file-name="text_items.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game files/text_items.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="768">
-              <caret line="40" column="36" lean-forward="false" selection-start-line="40" selection-start-column="36" selection-end-line="40" selection-end-column="36" />
+            <state relative-caret-position="311">
+              <caret line="110" column="0" lean-forward="false" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -61,8 +55,8 @@
       <file leaf-file-name="text_hero.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game files/text_hero.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1415">
-              <caret line="80" column="20" lean-forward="false" selection-start-line="80" selection-start-column="20" selection-end-line="80" selection-end-column="20" />
+            <state relative-caret-position="311">
+              <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -71,8 +65,8 @@
       <file leaf-file-name="text_exp.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game files/text_exp.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="720">
-              <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+            <state relative-caret-position="551">
+              <caret line="22" column="9" lean-forward="true" selection-start-line="22" selection-start-column="9" selection-end-line="22" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -91,8 +85,8 @@
       <file leaf-file-name="fight.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game files/fight.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="816">
-              <caret line="17" column="44" lean-forward="false" selection-start-line="17" selection-start-column="44" selection-end-line="17" selection-end-column="44" />
+            <state relative-caret-position="624">
+              <caret line="13" column="26" lean-forward="false" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -101,8 +95,8 @@
       <file leaf-file-name="game_engine.rb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/game files/game_engine.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="307" column="0" lean-forward="false" selection-start-line="307" selection-start-column="0" selection-end-line="307" selection-end-column="0" />
+            <state relative-caret-position="525">
+              <caret line="312" column="17" lean-forward="true" selection-start-line="312" selection-start-column="17" selection-end-line="312" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -158,12 +152,12 @@
         <option value="$PROJECT_DIR$/text_exp.rb" />
         <option value="$PROJECT_DIR$/game_engine.rb" />
         <option value="$PROJECT_DIR$/game files/text_world.rb" />
-        <option value="$PROJECT_DIR$/game files/fight.rb" />
         <option value="$PROJECT_DIR$/game files/text_items.rb" />
         <option value="$PROJECT_DIR$/game files/Enemy.rb" />
         <option value="$PROJECT_DIR$/game files/text_hero.rb" />
-        <option value="$PROJECT_DIR$/game files/game_engine.rb" />
+        <option value="$PROJECT_DIR$/game files/fight.rb" />
         <option value="$PROJECT_DIR$/game files/text_exp.rb" />
+        <option value="$PROJECT_DIR$/game files/game_engine.rb" />
       </list>
     </option>
   </component>
@@ -447,12 +441,12 @@
       <workItem from="1499381972622" duration="817000" />
       <workItem from="1499383494026" duration="42000" />
       <workItem from="1499436345120" duration="5522000" />
-      <workItem from="1499615105528" duration="12890000" />
+      <workItem from="1499615105528" duration="14130000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="39953000" />
+    <option name="totallyTimeSpent" value="41193000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -865,14 +859,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game files/text_hero.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1415">
-          <caret line="80" column="20" lean-forward="false" selection-start-line="80" selection-start-column="20" selection-end-line="80" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game files/Enemy.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1101">
@@ -883,32 +869,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/game files/fight.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="816">
-          <caret line="17" column="44" lean-forward="false" selection-start-line="17" selection-start-column="44" selection-end-line="17" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game files/text_items.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="768">
-          <caret line="40" column="36" lean-forward="false" selection-start-line="40" selection-start-column="36" selection-end-line="40" selection-end-column="36" />
+        <state relative-caret-position="624">
+          <caret line="13" column="26" lean-forward="false" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/game files/text_exp.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="720">
-          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state relative-caret-position="551">
+          <caret line="22" column="9" lean-forward="true" selection-start-line="22" selection-start-column="9" selection-end-line="22" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game files/text_items.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="110" column="0" lean-forward="false" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game files/text_hero.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/game files/game_engine.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="307" column="0" lean-forward="false" selection-start-line="307" selection-start-column="0" selection-end-line="307" selection-end-column="0" />
+        <state relative-caret-position="525">
+          <caret line="312" column="17" lean-forward="true" selection-start-line="312" selection-start-column="17" selection-end-line="312" selection-end-column="17" />
           <folding />
         </state>
       </provider>
